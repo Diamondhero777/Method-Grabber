@@ -1,0 +1,34 @@
+-- Function to send a message to a Discord webhook with error handling
+local function sendToDiscord(webhookUrl, message)
+    -- The JSON payload to send
+    local payload = textutils.serializeJSON({ content = message })
+
+    -- Perform the HTTP POST request
+    local headers = {
+        ["Content-Type"] = "application/json",
+        ["User-Agent"] = "ComputerCraft/1.7.10"  -- Add a User-Agent header to identify the client
+    }
+    local response, httpError = http.post(webhookUrl, payload, headers)
+
+    -- Check if the request was successful
+    if response then
+        print("Message sent successfully!")
+        response.close()
+    else
+        print("Failed to send message. HTTP Error: ".. tostring(httpError))
+    end
+end
+
+-- Your Discord webhook URL
+local webhookUrl = "<YOUR WEBHOOK HERE>"
+
+local message
+
+local methods = peripheral.getMethods( "top" )
+
+for k, v in pairs( methods ) do -- iterate through the methods available to the peripheral
+    local message = v
+    sendToDiscord(webhookUrl, message)
+    print(v)
+    os.sleep(0.5)
+  end
